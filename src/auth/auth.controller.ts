@@ -10,6 +10,7 @@ import { AuthService } from './auth.service';
 import { CredentialsDto } from './dto/credentials.dto';
 import { SignInResponseDto } from './dto/sign-in-response.dto';
 import { AuthGuard } from './auth.guard';
+import { RefreshDto } from './dto/refresh.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -28,10 +29,8 @@ export class AuthController {
   }
 
   @Post('/refresh')
-  async refresh(
-    @Body() body: { refreshToken: string },
-  ): Promise<SignInResponseDto> {
-    return await this.authService.refresh(body.refreshToken);
+  async refresh(@Body() refreshDto: RefreshDto): Promise<SignInResponseDto> {
+    return await this.authService.refresh(refreshDto.refreshToken);
   }
 
   @UseGuards(AuthGuard)
