@@ -12,7 +12,11 @@ describe('AuthService', () => {
     service = module.get<AuthService>(AuthService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  it('should succesfully sign up', () => {
+    service.signUp('email@gmail.com', 'password');
+  });
+
+  it('should fail sign in if user does not exists', () => {
+    service.signIn('nonexistingEmail@gmail.com', 'password');
   });
 });

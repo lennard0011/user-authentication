@@ -1,20 +1,42 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CredentialsDto } from './dto/credentials.dto';
+import { SignInResponseDto } from './dto/sign-in-response.dto';
+import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('/signup')
-  signUp(@Body() signUpDto: CredentialsDto): string {
+  async signUp(@Body() signUpDto: CredentialsDto): Promise<number> {
     const { email, password } = signUpDto;
-    return this.authService.signUp(email, password);
+    return await this.authService.signUp(email, password);
   }
 
   @Post('/signin')
-  signIn(@Body() signUpDto: CredentialsDto): string {
+  async signIn(@Body() signUpDto: CredentialsDto): Promise<SignInResponseDto> {
     const { email, password } = signUpDto;
-    return this.authService.signIn(email, password);
+    return await this.authService.signIn(email, password);
+  }
+
+  @Post('/refresh')
+  async refresh(
+    @Body() body: { refreshToken: string },
+  ): Promise<SignInResponseDto> {
+    return await this.authService.refresh(body.refreshToken);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('profile')
+  getProfile(@Request() req: Request & { user: any }) {
+    return req.user.id;
   }
 }
